@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿namespace BangazonWorkforce.Models
 
-namespace BangazonAPI.Models
 {
     public class Employees
     {
-        int Id { get; set; }
+        public int Id { get; set; }
 
-        string FirstName { get; set; }
+        public string FirstName { get; set; }
 
-        string LastName { get; set; }
+        public string LastName { get; set; }
 
-        int DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
 
-        Departments department { get; set; }
+        public Departments department { get; set; }
 
-        bool isSupervisor { get; set; }
+        public bool isSupervisor { get; set; }
 
-        Computers computer { get; set; }
+        public Computers computer { get; set; }
 
     }
 }
