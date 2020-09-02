@@ -1,14 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using BangazonWorkforce.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace BangazonWorkforce.Controllers
 {
+    
     public class EmployeesController : Controller
     {
+        private readonly IConfiguration _config;
+
+        public EmployeesController(IConfiguration config)
+        {
+            _config = config;
+        }
+        public SqlConnection Connection
+        {
+            get
+            {
+                return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            }
+        }
+
         // GET: EmployeesController
         public ActionResult Index()
         {
@@ -18,7 +36,34 @@ namespace BangazonWorkforce.Controllers
         // GET: EmployeesController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT Employee.Id, Employee.FirstName, Employee.LastName, Employee.DepartmentId, Employee.isSupervisor FROM Employee WHERE Employee.Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Employees employee = null;
+
+                    if (reader.Read())
+                    {
+                        employee = new Employees
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
+                            isSupervisor = reader.GetBoolean(reader.GetOrdinal("isSupervisor"))
+                        };
+                    }
+                    reader.Close();
+
+                    return View(employee);
+                }
+            }
         }
 
         // GET: EmployeesController/Create

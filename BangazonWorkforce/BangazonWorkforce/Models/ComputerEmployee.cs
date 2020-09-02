@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BangazonAPI.Models
+namespace BangazonWorkforce.Models
 {
     public class ComputerEmployee
     {
-        int Id { get; set; }
+       public int Id { get; set; }
 
-        int ComputerId { get; set; }
+        public int ComputerId { get; set; }
 
-        Computers computer { get; set; }
+        public Computers computer { get; set; }
 
-        int EmployeeId { get; set; }
+        public int EmployeeId { get; set; }
 
-        Employees employee { get; set; }
+        public Employees employee { get; set; }
 
-        DateTime AssignDate { get; set; }
+        public DateTime AssignDate { get; set; }
 
-        DateTime UnassignDate { get; set; }
+        public DateTime UnassignDate { get; set; }
 
     }
 }

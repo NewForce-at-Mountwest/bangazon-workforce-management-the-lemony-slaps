@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BangazonAPI.Models
+namespace BangazonWorkforce.Models
 {
     public class Departments
     {
-        int Id { get; set; }
+       public int Id { get; set; }
 
-        string Name { get; set; }
+        public string Name { get; set; }
 
-        int Budget { get; set; }
+        public int Budget { get; set; }
 
-        List<Employees> listOfEmployees { get; set; } = new List<Employees>();
+       public List<Employees> listOfEmployees { get; set; } = new List<Employees>();
     }
 }
