@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,26 @@ namespace BangazonWorkforce.Models
        public string LastName { get; set; }
 
        public int DepartmentId { get; set; }
+=======
+﻿namespace BangazonWorkforce.Models
 
-        Departments department { get; set; }
+{
+    public class Employees
+    {
+        public int Id { get; set; }
 
-        bool isSupervisor { get; set; }
+        public string FirstName { get; set; }
 
-        Computers computer { get; set; }
+        public string LastName { get; set; }
+
+        public int DepartmentId { get; set; }
+>>>>>>> master
+
+        public Departments department { get; set; }
+
+        public bool isSupervisor { get; set; }
+
+        public Computers computer { get; set; }
 
     }
 }
