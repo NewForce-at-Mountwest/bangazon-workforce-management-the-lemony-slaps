@@ -10,6 +10,8 @@ namespace BangazonWorkforce.Models.ViewModels
     {
         public Employees employee { get; set; }
         public Computers computer { get; set; }
+        public int currentCompId { get; set; }
+
 
         // This will be our dropdown
         public List<SelectListItem> departments { get; set; } = new List<SelectListItem>();

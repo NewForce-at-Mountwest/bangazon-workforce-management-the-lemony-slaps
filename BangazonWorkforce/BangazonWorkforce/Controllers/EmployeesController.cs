@@ -50,7 +50,7 @@ namespace BangazonWorkforce.Controllers
                     {
                         Employees employee = new Employees
                         {
-                            //Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
@@ -109,7 +109,7 @@ namespace BangazonWorkforce.Controllers
                 {
                     cmd.CommandText = @"
                         SELECT
-                            e.Id, e.FirstName, e.LastName, e.isSupervisor, e.DepartmentId, c.Make, c.Manufacturer
+                            e.Id, e.FirstName, e.LastName, e.isSupervisor, e.DepartmentId, c.Make, c.Manufacturer,c.id AS ComputerId
                         FROM Employee e JOIN ComputerEmployee ce ON ce.EmployeeId = e.id JOIN Computer c ON c.id = ce.ComputerId
                         WHERE e.Id = @id AND ce.UnassignDate IS NULL";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
@@ -128,7 +128,7 @@ namespace BangazonWorkforce.Controllers
                             DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
                             computer = new Computers()
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Id = reader.GetInt32(reader.GetOrdinal("ComputerId")),
                                 Make = reader.GetString(reader.GetOrdinal("Make")),
                                 Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer"))
                             }
@@ -140,13 +140,14 @@ namespace BangazonWorkforce.Controllers
                             Text = viewModel.employee.computer.Make + viewModel.employee.computer.Manufacturer,
                             Value = viewModel.employee.computer.Id.ToString()
                         };
-
+                        viewModel.currentCompId = viewModel.employee.computer.Id;
                         viewModel.computers.Add(currentComputerTag);
-                        reader.Close();
+                        
                     }
+                    reader.Close();
 
-                        // Select all the departments
-                        cmd.CommandText = @"SELECT d.Id, d.Name FROM Department d";
+                    // Select all the departments
+                    cmd.CommandText = @"SELECT d.Id, d.Name FROM Department d";
 
                         SqlDataReader Deptreader = cmd.ExecuteReader();
                         // Create a new instance of our view model
@@ -228,39 +229,48 @@ namespace BangazonWorkforce.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, EmployeeEditViewModel viewModel)
     {
-        try
-        {
-            using (SqlConnection conn = Connection)
+            try
             {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (SqlConnection conn = Connection)
                 {
-                    cmd.CommandText = @"UPDATE Employee
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Employee
                                             SET FirstName = @firstName,
                                                 LastName = @lastName,
                                                 isSupervisor = @isSupervisor,
                                                 DepartmentId = @departmentId
-                                            WHERE Id = @id";
-                    cmd.Parameters.Add(new SqlParameter("@firstName", viewModel.employee.FirstName));
-                    cmd.Parameters.Add(new SqlParameter("@lastName", viewModel.employee.LastName));
-                    cmd.Parameters.Add(new SqlParameter("@isSupervisor", viewModel.employee.isSupervisor));
-                    cmd.Parameters.Add(new SqlParameter("@departmentId", viewModel.employee.DepartmentId));
-                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                                            WHERE Id = @id ";
+                        cmd.Parameters.Add(new SqlParameter("@firstName", viewModel.employee.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@lastName", viewModel.employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@isSupervisor", viewModel.employee.isSupervisor));
+                        cmd.Parameters.Add(new SqlParameter("@departmentId", viewModel.employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                    int rowsAffected = cmd.ExecuteNonQuery();
-                    //if (rowsAffected > 0)
-                    //{
-                    //    return RedirectToAction(nameof(Index));
-                    //}
-                    throw new Exception("No rows affected");
+                        if (viewModel.employee.computer.Id != viewModel.currentCompId)
+                        {
+                            cmd.CommandText += @"Update ComputerEmployee
+                                                SET UnassignDate = GetDate()
+                                                WHERE EmployeeId = @id AND UnassignDate IS NULL
+                                                Insert INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate, UnassignDate) VALUES (@id,@computerId,GetDate(), null)";
+
+                            cmd.Parameters.Add(new SqlParameter("@computerId", viewModel.employee.computer.Id));
+                        }
+                            int rowsAffected = cmd.ExecuteNonQuery();
+                            if (rowsAffected > 0)
+                            {
+                                return RedirectToAction(nameof(Index));
+                            }
+                            throw new Exception("No rows affected");
+                        }
+                    }
                 }
+            
+            catch (Exception)
+            {
+                return View(viewModel);
             }
-        }
-
-        catch (Exception)
-        {
-            return View(viewModel);
-        }
         }
 
         // GET: EmployeesController/Delete/5
