@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BangazonAPI.Models
+namespace BangazonWorkforce.Models
 {
     public class Computers
+
     {
         int Id { get; set; }
 

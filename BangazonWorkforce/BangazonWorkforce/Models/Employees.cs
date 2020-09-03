@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BangazonWorkforce.Models;
 
-namespace BangazonAPI.Models
+namespace BangazonWorkforce.Models
 {
     public class Employees
     {
-        int Id { get; set; }
+       public int Id { get; set; }
 
-        string FirstName { get; set; }
+       public string FirstName { get; set; }
 
-        string LastName { get; set; }
+       public string LastName { get; set; }
 
-        int DepartmentId { get; set; }
+       public int DepartmentId { get; set; }
 
         Departments department { get; set; }
 
