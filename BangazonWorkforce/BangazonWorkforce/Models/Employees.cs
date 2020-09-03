@@ -21,5 +21,7 @@ namespace BangazonWorkforce.Models
 
         public Computers computer { get; set; }
 
+        public TrainingPrograms TrainingProgram { get; set; }
+
     }
 }
