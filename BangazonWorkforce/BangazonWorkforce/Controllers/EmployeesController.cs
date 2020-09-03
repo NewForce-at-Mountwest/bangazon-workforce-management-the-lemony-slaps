@@ -93,7 +93,7 @@ namespace BangazonWorkforce.Controllers
                             DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
                             computer = new Computers()
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("c.Id"))
+                                Id = reader.GetInt32(reader.GetOrdinal("Id"))
                             }
                         };
 
