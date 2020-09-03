@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BangazonWorkforce.Models
 {
@@ -12,6 +9,8 @@ namespace BangazonWorkforce.Models
         public string Name { get; set; }
 
         public int Budget { get; set; }
+
+        public int NumofEmployees { get; set; }
 
         public List<Employees> listOfEmployees { get; set; } = new List<Employees>();
     }

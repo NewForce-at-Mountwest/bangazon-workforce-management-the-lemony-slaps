@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿SELECT ce.Id, ce.EmployeeId, ce.ComputerId, ce.AssignDate, ce.UnassignDate, c.Make, c.Manufacturer FROM ComputerEmployee ce 
                       RIGHT JOIN Computer c ON ce.ComputerId = c.id
                       RIGHT JOIN Employee e ON ce.EmployeeId = e.id 
@@ -18,3 +19,13 @@ FROM Department d
 
 SELECT ce.Id, ce.EmployeeId, ce.ComputerId, ce.AssignDate, ce.UnassignDate, c.Make, c.Manufacturer FROM ComputerEmployee ce JOIN Computer c ON ce.ComputerId = c.id
                         WHERE ce.UnassignDate IS NOT NULL
+=======
+﻿SELECT e.Id,
+                       e.FirstName,
+                       e.LastName,
+                       e.DepartmentId,
+                       e.isSuperVisor,
+                    d.Name 
+                    FROM Employee e
+                    JOIN Department d ON e.DepartmentId = d.Id
+>>>>>>> master
