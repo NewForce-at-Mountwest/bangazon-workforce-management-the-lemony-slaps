@@ -42,7 +42,9 @@ namespace BangazonWorkforce.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                       SELECT e.FirstName, e.LastName, d.[Name], c.Make, c.Manufacturer, tP.[Name] FROM Employee e 
+                      SELECT e.FirstName AS [First Name], e.LastName AS [Last Name], d.[Name] AS [Department Name],
+                       c.Make AS [Computer Make], c.Manufacturer AS [Computer Manufacturer], tP.[Name] AS [Training Program]
+                       FROM Employee e 
                        JOIN Department d on e.DepartmentId = d.Id
                        JOIN ComputerEmployee cE on cE.EmployeeId = e.Id
                        JOIN Computer c on cE.ComputerId = c.Id
@@ -56,23 +58,24 @@ namespace BangazonWorkforce.Controllers
 
                     if (reader.Read())
                     {
+                        List<TrainingPrograms> TrainingProgramList = new List<TrainingPrograms>();
                         employee = new Employees
                         {
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            FirstName = reader.GetString(reader.GetOrdinal("First Name")),
+                            LastName = reader.GetString(reader.GetOrdinal("Last Name")),
                             department = new Departments
                             {
-                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                Name = reader.GetString(reader.GetOrdinal("Department Name")),
                             },
                             computer = new Computers
                             {
-                                Make = reader.GetString(reader.GetOrdinal("Make")),
-                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer"))
-                            },
-                            TrainingProgram = new TrainingPrograms
-                            {
-                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                                Make = reader.GetString(reader.GetOrdinal("Computer Make")),
+                                Manufacturer = reader.GetString(reader.GetOrdinal("Computer Manufacturer"))
                             }
+                        //TrainingPrograms TrainingProgramList = new TrainingPrograms
+                        //    {
+                        //        Name = reader.GetString(reader.GetOrdinal("Name"))
+                        //    }
                             
                         };
                     }
