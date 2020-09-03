@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BangazonAPI.Models;
+using BangazonWorkforce.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 

@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -10,14 +10,7 @@ using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using BangazonWorkforce.Models;
-=======
-﻿using BangazonWorkforce.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Data.SqlClient;
->>>>>>> master
+
 
 namespace BangazonWorkforce.Controllers
 {
@@ -143,12 +136,13 @@ namespace BangazonWorkforce.Controllers
                     using (SqlCommand cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = @"INSERT INTO Employee
-                ( FirstName, LastName, DepartmentId )
+                ( FirstName, LastName, DepartmentId, IsSupervisor )
                  VALUES
-                 ( @firstName, @lastName, @departmentId )";
+                 ( @firstName, @lastName, @departmentId, @isSupervisor )";
                         cmd.Parameters.Add(new SqlParameter("@firstName", viewModel.employee.FirstName));
                         cmd.Parameters.Add(new SqlParameter("@lastName", viewModel.employee.LastName));
-                        cmd.Parameters.Add(new SqlParameter("@slackHandle", viewModel.employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@departmentId", viewModel.employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@isSupervisor", viewModel.employee.isSupervisor));
                         cmd.ExecuteNonQuery();
 
                         return RedirectToAction(nameof(Index));
