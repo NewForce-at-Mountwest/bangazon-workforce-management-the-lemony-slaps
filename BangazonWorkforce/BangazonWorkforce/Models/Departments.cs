@@ -12,6 +12,6 @@ namespace BangazonWorkforce.Models
 
         public int NumofEmployees { get; set; }
 
-    public List<Employees> listOfEmployees { get; set; } = new List<Employees>();
-}
+        public List<Employees> listOfEmployees { get; set; } = new List<Employees>();
+    }
 }
