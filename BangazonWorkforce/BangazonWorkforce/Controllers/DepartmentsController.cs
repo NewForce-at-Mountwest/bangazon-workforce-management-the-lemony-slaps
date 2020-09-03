@@ -31,12 +31,9 @@ namespace BangazonWorkforce.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                SELECT d.Id,
-                       d.Name,
-                        d.Budget
-                FROM Departments d
-                JOIN Employee e ON d.
-            ";
+                Select d.Id, d.Name AS 'Department Name', d.Budget, (SELECT COUNT(e.DepartmentId) FROM Employee e WHERE e.DepartmentId=d.id) AS 'Num of Employees'
+FROM Department d";
+
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -44,79 +41,96 @@ namespace BangazonWorkforce.Controllers
                     while (reader.Read())
                     {
                         Departments department = new Departments
-                    }
-                    return View();
-                }
+                        {
+                            //Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Department Name")),
+                            Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
+                            NumofEmployees = reader.GetInt32(reader.GetOrdinal("Num of Employees"))
+                        };
 
-                // GET: DepartmentsController/Details/5
-                public ActionResult Details(int id)
-                {
-                    return View();
-                }
+                        departments.Add(department);
 
-                // GET: DepartmentsController/Create
-                public ActionResult Create()
-                {
-                    return View();
-                }
+                    };
 
-                // POST: DepartmentsController/Create
-                [HttpPost]
-                [ValidateAntiForgeryToken]
-                public ActionResult Create(IFormCollection collection)
-                {
-                    try
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                    catch
-                    {
-                        return View();
-                    }
-                }
+                    reader.Close();
+                    return View(departments);
 
-                // GET: DepartmentsController/Edit/5
-                public ActionResult Edit(int id)
-                {
-                    return View();
-                }
-
-                // POST: DepartmentsController/Edit/5
-                [HttpPost]
-                [ValidateAntiForgeryToken]
-                public ActionResult Edit(int id, IFormCollection collection)
-                {
-                    try
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                    catch
-                    {
-                        return View();
-                    }
-                }
-
-                // GET: DepartmentsController/Delete/5
-                public ActionResult Delete(int id)
-                {
-                    return View();
-                }
-
-                // POST: DepartmentsController/Delete/5
-                [HttpPost]
-                [ValidateAntiForgeryToken]
-                public ActionResult Delete(int id, IFormCollection collection)
-                {
-                    try
-                    {
-                        return RedirectToAction(nameof(Index));
-                    }
-                    catch
-                    {
-                        return View();
-                    }
                 }
             }
         }
+
+
+        //                // GET: DepartmentsController/Details/5
+        //                public ActionResult Details(int id)
+        //                {
+        //                    return View();
+        //                }
+
+        //                // GET: DepartmentsController/Create
+        //                public ActionResult Create()
+        //                {
+        //                    return View();
+        //                }
+
+        //                // POST: DepartmentsController/Create
+        //                [HttpPost]
+        //                [ValidateAntiForgeryToken]
+        //                public ActionResult Create(IFormCollection collection)
+        //                {
+        //                    try
+        //                    {
+        //                        return RedirectToAction(nameof(Index));
+        //                    }
+        //                    catch
+        //                    {
+        //                        return View();
+        //                    }
+        //                }
+
+        //                // GET: DepartmentsController/Edit/5
+        //                public ActionResult Edit(int id)
+        //                {
+        //                    return View();
+        //                }
+
+        //                // POST: DepartmentsController/Edit/5
+        //                [HttpPost]
+        //                [ValidateAntiForgeryToken]
+        //                public ActionResult Edit(int id, IFormCollection collection)
+        //                {
+        //                    try
+        //                    {
+        //                        return RedirectToAction(nameof(Index));
+        //                    }
+        //                    catch
+        //                    {
+        //                        return View();
+        //                    }
+        //                }
+
+        //                // GET: DepartmentsController/Delete/5
+        //                public ActionResult Delete(int id)
+        //                {
+        //                    return View();
+        //                }
+
+        //                // POST: DepartmentsController/Delete/5
+        //                [HttpPost]
+        //                [ValidateAntiForgeryToken]
+        //                public ActionResult Delete(int id, IFormCollection collection)
+        //                {
+        //                    try
+        //                    {
+        //                        return RedirectToAction(nameof(Index));
+        //                    }
+        //                    catch
+        //                    {
+        //                        return View();
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
     }
 }
