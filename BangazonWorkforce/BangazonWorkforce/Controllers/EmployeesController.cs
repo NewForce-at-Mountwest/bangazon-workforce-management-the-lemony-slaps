@@ -93,11 +93,20 @@ namespace BangazonWorkforce.Controllers
                             DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
                             computer = new Computers()
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id"))
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Make = reader.GetString(reader.GetOrdinal("Make")),
+                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer"))
                             }
                         };
 
+                        // Use the info to build our SelectListItem
+                        SelectListItem currentComputerTag = new SelectListItem()
+                        {
+                            Text = viewModel.employee.computer.Make + viewModel.employee.computer.Manufacturer,
+                            Value = viewModel.employee.computer.Id.ToString()
+                        };
 
+                        viewModel.computers.Add(currentComputerTag);
                         reader.Close();
                     }
 
@@ -158,6 +167,7 @@ namespace BangazonWorkforce.Controllers
                             viewModel.computers.Add(computerOptionTag);
 
                         }
+                        
 
                         Compreader.Close();
 
