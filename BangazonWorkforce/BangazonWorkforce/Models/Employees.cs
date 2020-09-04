@@ -1,9 +1,5 @@
-
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BangazonWorkforce.Models;
 
 namespace BangazonWorkforce.Models
 {
@@ -26,3 +22,4 @@ namespace BangazonWorkforce.Models
         public List<TrainingPrograms> TrainingProgramList { get; set; } = new List<TrainingPrograms>();
     }
 }
+

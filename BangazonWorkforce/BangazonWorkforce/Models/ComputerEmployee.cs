@@ -4,7 +4,7 @@ namespace BangazonWorkforce.Models
 {
     public class ComputerEmployee
     {
-       public int Id { get; set; }
+        public int Id { get; set; }
 
         public int ComputerId { get; set; }
 
