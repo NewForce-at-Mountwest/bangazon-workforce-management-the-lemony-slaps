@@ -122,36 +122,35 @@ namespace BangazonWorkforce.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(TrainingPrograms trainingToAdd)
         {
-            try
+            //try
+            //{
+            using (SqlConnection conn = Connection)
             {
-                using (SqlConnection conn = Connection)
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = @"INSERT INTO TrainingPrograms ( Name, StartDate, EndDate, MaxAttendees)
-                    OUPUT INSERTED.Id
+                    cmd.CommandText = @"INSERT INTO TrainingProgram ( Name, StartDate, EndDate, MaxAttendees)
                     VALUES ( @Name, @StartDate, @EndDate, @MaxAttendees)";
 
 
-                        cmd.Parameters.Add(new SqlParameter("@Name", trainingToAdd.Name));
-                        cmd.Parameters.Add(new SqlParameter("@StartDate", trainingToAdd.StartDate));
-                        cmd.Parameters.Add(new SqlParameter("@EndDate", trainingToAdd.EndDate));
-                        cmd.Parameters.Add(new SqlParameter("@MaxAttendees", trainingToAdd.MaxAttendees));
+                    cmd.Parameters.Add(new SqlParameter("@Name", trainingToAdd.Name));
+                    cmd.Parameters.Add(new SqlParameter("@StartDate", trainingToAdd.StartDate));
+                    cmd.Parameters.Add(new SqlParameter("@EndDate", trainingToAdd.EndDate));
+                    cmd.Parameters.Add(new SqlParameter("@MaxAttendees", trainingToAdd.MaxAttendees));
 
-                        cmd.ExecuteNonQuery();
+                    cmd.ExecuteNonQuery();
+                    return RedirectToAction(nameof(Index));
 
-
-                    }
                 }
-                return RedirectToAction(nameof(Index));
-
             }
 
-            catch
-            {
-                return View();
-            }
+
+            //}
+
+            //catch
+            //{
+            //    return View();
+            //}
         }
 
         //// GET: TrainingPrograms/Edit/5
