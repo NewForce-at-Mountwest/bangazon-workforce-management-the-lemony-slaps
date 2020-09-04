@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 
-
 namespace BangazonWorkforce.Models
 {
     public class Departments

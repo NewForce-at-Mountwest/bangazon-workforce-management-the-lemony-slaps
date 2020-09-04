@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BangazonWorkforce.Models
 {
@@ -12,15 +13,13 @@ namespace BangazonWorkforce.Models
 
         public int DepartmentId { get; set; }
 
-
-
-
         public Departments department { get; set; }
 
         public bool isSupervisor { get; set; }
 
         public Computers computer { get; set; }
 
+        public List<TrainingPrograms> TrainingProgramList { get; set; } = new List<TrainingPrograms>();
     }
 }
 

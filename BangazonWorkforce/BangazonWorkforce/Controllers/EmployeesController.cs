@@ -1,22 +1,22 @@
-
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using BangazonWorkforce.Models;
+using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using BangazonWorkforce.Models;
-
 
 namespace BangazonWorkforce.Controllers
 {
+
     public class EmployeesController : Controller
     {
         private readonly IConfiguration _config;
+
         public EmployeesController(IConfiguration config)
         {
             _config = config;
@@ -28,126 +28,98 @@ namespace BangazonWorkforce.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
+
         // GET: EmployeesController
         public ActionResult Index()
         {
+            return View();
+        }
 
+        // GET: EmployeesController/Details/5
+        public ActionResult Details(int id)
+        {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    SELECT e.Id,
-                       e.FirstName,
-                       e.LastName,
-                       e.DepartmentId,
-                       e.isSuperVisor,
-                    d.Name 
-                    FROM Employee e
-                    JOIN Department d ON e.DepartmentId = d.Id
-                ";
+                      SELECT e.FirstName AS [First Name], e.LastName AS [Last Name], d.[Name] AS [Department Name],
+                       c.Make AS [Computer Make], c.Manufacturer AS [Computer Manufacturer], tP.[Name] AS [Training Program]
+                       FROM Employee e
+                       LEFT JOIN Department d on e.DepartmentId = d.Id
+                       LEFT JOIN ComputerEmployee cE on cE.EmployeeId = e.Id
+                       LEFT JOIN Computer c on cE.ComputerId = c.Id
+                       LEFT JOIN EmployeeTraining eT on eT.EmployeeId = e.Id
+                       LEFT JOIN TrainingProgram tP on eT.TrainingProgramId = tP.Id
+                       WHERE e.Id = @id AND cE.UnassignDate is NULL";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    List<Employees> employees = new List<Employees>();
+                    Employees employee = null;
+
                     while (reader.Read())
                     {
-                        Employees employee = new Employees
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId")),
-                            //isSupervisor = reader.GetBoolean(reader.GetOrdinal("IsSupervisor")),
-                            department = new Departments()
+                        if (employee == null && reader.IsDBNull(reader.GetOrdinal("Training Program")) && reader.IsDBNull(reader.GetOrdinal("Computer Make")))
+                            employee = new Employees
+                       
                             {
-                                Name = reader.GetString(reader.GetOrdinal("Name"))
-                            }
-
+                                FirstName = reader.GetString(reader.GetOrdinal("First Name")),
+                                LastName = reader.GetString(reader.GetOrdinal("Last Name")),
+                                department = new Departments
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("Department Name")),
+                                },
+                                computer = new Computers
+                                {
+                                    Make = reader.GetString(reader.GetOrdinal("Computer Make")),
+                                    Manufacturer = reader.GetString(reader.GetOrdinal("Computer Manufacturer"))
+                                }
+                            };
+                        else if (employee == null && !reader.IsDBNull(reader.GetOrdinal("Training Program")) && !reader.IsDBNull(reader.GetOrdinal("Computer Make")))
+                            employee = new Employees
+                            {
+                                FirstName = reader.GetString(reader.GetOrdinal("First Name")),
+                                LastName = reader.GetString(reader.GetOrdinal("Last Name")),
+                                department = new Departments
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("Department Name")),
+                                },
+                                computer = new Computers
+                                {
+                                    Make = reader.GetString(reader.GetOrdinal("Computer Make")),
+                                    Manufacturer = reader.GetString(reader.GetOrdinal("Computer Manufacturer"))
+                                }
+                            };
+                        TrainingPrograms TrainingProgramList = new TrainingPrograms
+                        {
+                            Name = reader.GetString(reader.GetOrdinal("Training Program"))
                         };
 
-                        employees.Add(employee);
-                    }
+                        employee.TrainingProgramList.Add(TrainingProgramList);
 
+                    }
                     reader.Close();
 
-                    return View(employees);
+                    return View(employee);
                 }
             }
         }
-
-        // GET: EmployeesController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-    
 
         // GET: EmployeesController/Create
         public ActionResult Create()
         {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"SELECT Department.Name, Department.Id  FROM Department";
-
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    EmployeeDepartmentViewModel viewModel = new EmployeeDepartmentViewModel();
-                    while (reader.Read())
-                    {
-                        Departments department = new Departments
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name"))
-                            
-
-                        };
-                        SelectListItem DepartmentOptionTag = new SelectListItem()
-                        {
-                            Text = department.Name,
-                            Value = department.Id.ToString()
-                        };
-
-
-                        viewModel.departments.Add(DepartmentOptionTag);
-                    }
-
-                    reader.Close();
-
-                    return View(viewModel);
-                }
-
-            }
+            return View();
         }
 
         // POST: EmployeesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EmployeeDepartmentViewModel viewModel)
+        public ActionResult Create(IFormCollection collection)
         {
             try
             {
-                using (SqlConnection conn = Connection)
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = @"INSERT INTO Employee
-                ( FirstName, LastName, DepartmentId, IsSupervisor )
-                 VALUES
-                 ( @firstName, @lastName, @departmentId, @isSupervisor )";
-                        cmd.Parameters.Add(new SqlParameter("@firstName", viewModel.employee.FirstName));
-                        cmd.Parameters.Add(new SqlParameter("@lastName", viewModel.employee.LastName));
-                        cmd.Parameters.Add(new SqlParameter("@departmentId", viewModel.employee.DepartmentId));
-                        cmd.Parameters.Add(new SqlParameter("@isSupervisor", viewModel.employee.isSupervisor));
-                        cmd.ExecuteNonQuery();
-
-                        return RedirectToAction(nameof(Index));
-                    }
-                }
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
