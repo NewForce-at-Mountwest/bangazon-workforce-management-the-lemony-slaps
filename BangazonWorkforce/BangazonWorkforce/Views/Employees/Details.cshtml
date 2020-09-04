@@ -7,46 +7,52 @@
 @*First + Last Name
     Dept Name
     Assigned Computer --- Make/Manufacturer
-    Training Program*@
+    Training Program
+    Display Flex --- container*@
 
 <h1>Details</h1>
 
 <div>
     <h4>Employees</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            First Name
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class="col-sm-2">
-            Last Name
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class="col-sm-2">
-            Department Name
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.department.Name)
-        </dd>
-        <dt class="col-sm-2">
-            Computer Make/Manufacturer
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.computer.Make) /  @Html.DisplayFor(model => model.computer.Manufacturer)
-        </dd>
-@*loop for training program*@
-        @*<dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TrainingProgram.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TrainingProgram.Name)
-        </dd>*@
-    </dl>
+    <div class="d-flex flex-nowrap">
+        <dl class="row">
+            <dt class="col-sm-2">
+                First Name
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt class="col-sm-2">
+                Last Name
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+            <dt class="col-sm-2">
+                Department Name
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.department.Name)
+            </dd>
+            <dt class="col-sm-2">
+                Computer Make/Manufacturer
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.computer.Make) /  @Html.DisplayFor(model => model.computer.Manufacturer)
+            </dd>
+            @*loop for training program*@
+            <dt class="col-sm-2">
+                Training Program:
+            </dt>
+            @foreach (TrainingPrograms programs in Model.TrainingProgramList)
+            {
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => programs.Name)
+                </dd>
+            }
+        </dl>
+    </div>
 </div>
 <div>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BangazonWorkforce.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 
 namespace BangazonWorkforce.Controllers
@@ -44,40 +45,57 @@ namespace BangazonWorkforce.Controllers
                     cmd.CommandText = @"
                       SELECT e.FirstName AS [First Name], e.LastName AS [Last Name], d.[Name] AS [Department Name],
                        c.Make AS [Computer Make], c.Manufacturer AS [Computer Manufacturer], tP.[Name] AS [Training Program]
-                       FROM Employee e 
-                       JOIN Department d on e.DepartmentId = d.Id
-                       JOIN ComputerEmployee cE on cE.EmployeeId = e.Id
-                       JOIN Computer c on cE.ComputerId = c.Id
-                       JOIN EmployeeTraining eT on eT.EmployeeId = e.Id
-                       JOIN TrainingProgram tP on eT.TrainingProgramId = tP.Id
+                       FROM Employee e
+                       LEFT JOIN Department d on e.DepartmentId = d.Id
+                       LEFT JOIN ComputerEmployee cE on cE.EmployeeId = e.Id
+                       LEFT JOIN Computer c on cE.ComputerId = c.Id
+                       LEFT JOIN EmployeeTraining eT on eT.EmployeeId = e.Id
+                       LEFT JOIN TrainingProgram tP on eT.TrainingProgramId = tP.Id
                        WHERE e.Id = @id AND cE.UnassignDate is NULL";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Employees employee = null;
 
-                    if (reader.Read())
+                    while (reader.Read())
                     {
-                        List<TrainingPrograms> TrainingProgramList = new List<TrainingPrograms>();
-                        employee = new Employees
+                        if (employee == null && reader.IsDBNull(reader.GetOrdinal("Training Program")) && reader.IsDBNull(reader.GetOrdinal("Computer Make")))
+                            employee = new Employees
+                            {
+                                FirstName = reader.GetString(reader.GetOrdinal("First Name")),
+                                LastName = reader.GetString(reader.GetOrdinal("Last Name")),
+                                department = new Departments
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("Department Name")),
+                                },
+                                computer = new Computers
+                                {
+                                    Make = reader.GetString(reader.GetOrdinal("Computer Make")),
+                                    Manufacturer = reader.GetString(reader.GetOrdinal("Computer Manufacturer"))
+                                }
+                            };
+                        else if (employee == null && !reader.IsDBNull(reader.GetOrdinal("Training Program")) && !reader.IsDBNull(reader.GetOrdinal("Computer Make")))
+                            employee = new Employees
+                            {
+                                FirstName = reader.GetString(reader.GetOrdinal("First Name")),
+                                LastName = reader.GetString(reader.GetOrdinal("Last Name")),
+                                department = new Departments
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("Department Name")),
+                                },
+                                computer = new Computers
+                                {
+                                    Make = reader.GetString(reader.GetOrdinal("Computer Make")),
+                                    Manufacturer = reader.GetString(reader.GetOrdinal("Computer Manufacturer"))
+                                }
+                            };
+                        TrainingPrograms TrainingProgramList = new TrainingPrograms
                         {
-                            FirstName = reader.GetString(reader.GetOrdinal("First Name")),
-                            LastName = reader.GetString(reader.GetOrdinal("Last Name")),
-                            department = new Departments
-                            {
-                                Name = reader.GetString(reader.GetOrdinal("Department Name")),
-                            },
-                            computer = new Computers
-                            {
-                                Make = reader.GetString(reader.GetOrdinal("Computer Make")),
-                                Manufacturer = reader.GetString(reader.GetOrdinal("Computer Manufacturer"))
-                            }
-                        //TrainingPrograms TrainingProgramList = new TrainingPrograms
-                        //    {
-                        //        Name = reader.GetString(reader.GetOrdinal("Name"))
-                        //    }
-                            
+                            Name = reader.GetString(reader.GetOrdinal("Training Program"))
                         };
+
+                        employee.TrainingProgramList.Add(TrainingProgramList);
+
                     }
                     reader.Close();
 
