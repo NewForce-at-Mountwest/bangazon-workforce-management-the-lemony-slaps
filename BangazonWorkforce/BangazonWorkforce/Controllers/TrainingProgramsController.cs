@@ -68,48 +68,48 @@ namespace BangazonWorkforce.Controllers
         }
 
         // GET: TrainingPrograms/Details/5
-        public ActionResult Details(int id)
-        {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    DateTime today = DateTime.Today;
-                    cmd.CommandText = @"
-                SELECT tp.Id,
-                    tp.Name,
-                    tp.StartDate,
-                    tp.EndDate,
-                    tp.MaxAttendees
-                    FROM TrainingPrograms tp
-                    WHERE EndDate > @today
-                ";
-                    cmd.Parameters.Add(new SqlParameter("@today", today));
-                    SqlDataReader reader = cmd.ExecuteReader();
+        //public ActionResult Details(int id)
+        //{
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            DateTime today = DateTime.Today;
+        //            cmd.CommandText = @"
+        //        SELECT tp.Id,
+        //            tp.Name,
+        //            tp.StartDate,
+        //            tp.EndDate,
+        //            tp.MaxAttendees
+        //            FROM TrainingPrograms tp
+        //            WHERE EndDate > @today
+        //        ";
+        //            cmd.Parameters.Add(new SqlParameter("@today", today));
+        //            SqlDataReader reader = cmd.ExecuteReader();
 
-                    List<TrainingPrograms> trainingList = new List<TrainingPrograms>();
-                    while (reader.Read())
-                    {
-                        TrainingPrograms trainingToAdd = new TrainingPrograms
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name")),
-                            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
-                            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
-                            MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
-                        };
+        //            List<TrainingPrograms> trainingList = new List<TrainingPrograms>();
+        //            while (reader.Read())
+        //            {
+        //                TrainingPrograms trainingToAdd = new TrainingPrograms
+        //                {
+        //                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+        //                    Name = reader.GetString(reader.GetOrdinal("Name")),
+        //                    StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+        //                    EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+        //                    MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
+        //                };
 
-                        trainingList.Add(trainingToAdd);
-                    }
+        //                trainingList.Add(trainingToAdd);
+        //            }
 
-                    reader.Close();
+        //            reader.Close();
 
 
-                    return View(trainingList);
-                }
-            }
-        }
+        //            return View(trainingList);
+        //        }
+        //    }
+        //}
 
         // GET: TrainingPrograms/Create
         public ActionResult Create()
@@ -117,20 +117,42 @@ namespace BangazonWorkforce.Controllers
             return View();
         }
 
-        //// POST: TrainingPrograms/Create
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create(IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+        // POST: TrainingPrograms/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(TrainingPrograms trainingToAdd)
+        {
+            try
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO TrainingPrograms ( Name, StartDate, EndDate, MaxAttendees)
+                    OUPUT INSERTED.Id
+                    VALUES ( @Name, @StartDate, @EndDate, @MaxAttendees)";
+
+
+                        cmd.Parameters.Add(new SqlParameter("@Name", trainingToAdd.Name));
+                        cmd.Parameters.Add(new SqlParameter("@StartDate", trainingToAdd.StartDate));
+                        cmd.Parameters.Add(new SqlParameter("@EndDate", trainingToAdd.EndDate));
+                        cmd.Parameters.Add(new SqlParameter("@MaxAttendees", trainingToAdd.MaxAttendees));
+
+                        cmd.ExecuteNonQuery();
+
+
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            catch
+            {
+                return View();
+            }
+        }
 
         //// GET: TrainingPrograms/Edit/5
         //public ActionResult Edit(int id)

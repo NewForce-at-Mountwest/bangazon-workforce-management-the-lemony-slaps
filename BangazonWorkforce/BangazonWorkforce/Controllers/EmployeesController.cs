@@ -1,15 +1,11 @@
-
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BangazonWorkforce.Models;
+using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using BangazonWorkforce.Models;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 
 namespace BangazonWorkforce.Controllers
@@ -81,7 +77,7 @@ namespace BangazonWorkforce.Controllers
         {
             return View();
         }
-    
+
 
         // GET: EmployeesController/Create
         public ActionResult Create()
@@ -102,7 +98,7 @@ namespace BangazonWorkforce.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name"))
-                            
+
 
                         };
                         SelectListItem DepartmentOptionTag = new SelectListItem()
@@ -166,8 +162,9 @@ namespace BangazonWorkforce.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
-            try { 
-            
+            try
+            {
+
                 return RedirectToAction(nameof(Index));
             }
             catch
