@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace BangazonWorkforce.Models
 {
     public class Computers
+
     {
         public int Id { get; set; }
 

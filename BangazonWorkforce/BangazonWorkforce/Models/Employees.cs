@@ -1,6 +1,6 @@
-﻿namespace BangazonWorkforce.Models
+﻿using System;
 
-
+namespace BangazonWorkforce.Models
 {
     public class Employees
     {
@@ -12,6 +12,9 @@
 
         public int DepartmentId { get; set; }
 
+
+
+
         public Departments department { get; set; }
 
         public bool isSupervisor { get; set; }
@@ -20,3 +23,4 @@
 
     }
 }
+
